@@ -1,0 +1,15 @@
+import React from "react";
+import { Layout } from 'react-admin';
+import DashboardChartsRow from "../../admin/components/dashboardChartsRow.tsx";
+import DashboardPanelsRow from "../../admin/components/dashboardPanelsRow.tsx";
+
+export default function Dashboard() {
+    return (
+
+        <div className="lg:p-8 bg-gray-50 min-h-screen">
+            <DashboardChartsRow/>
+            <DashboardPanelsRow/>
+        </div>
+
+    );
+}
