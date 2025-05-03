@@ -5,6 +5,11 @@ import Menu from "../../frontend/src/pages/Delimano/menu.tsx";
 import Rezervace from "../../frontend/src/pages/Delimano/rezervace.tsx";
 import Dashboard from "../../frontend/src/pages/adminPages/dashboard.tsx";
 import Layout from "../../frontend/src/admin/shared/layout.tsx";
+import NotificationPage from "./pages/adminPages/notifications.tsx";
+import {NotificationsProvider} from "./context/notificationsContext.tsx";
+import {ReservationProvider} from "./context/reservationsContext.tsx";
+import ReservationPage from "./pages/adminPages/reservations.tsx";
+
 
 function App() {
   const [count, setCount] = useState(0)
@@ -17,12 +22,21 @@ function App() {
           <Route path="/menu" element={<Menu />} />
           <Route path="/rezervace" element={<Rezervace />} />
 
-            {/* Admin routy */}
-            <Route path="/admin" element={<Layout />}>
-                <Route index element={<Dashboard />} />
-                {/* další admin podstránky */}
-            </Route>
 
+            {/* Admin routy */}
+                <Route path="/admin" element={
+                    <NotificationsProvider>
+                        <ReservationProvider>
+                             <Layout />
+                        </ReservationProvider>
+                    </NotificationsProvider>
+                    }>
+
+                    <Route index element={<Dashboard />} />
+                    <Route path="notification" element={<NotificationPage />} />
+                    <Route path="reservations" element={<ReservationPage />} />
+                    {/* další admin podstránky */}
+                </Route>
         </Routes>
 
       </Router>

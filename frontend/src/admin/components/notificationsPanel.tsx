@@ -1,9 +1,14 @@
 import { useState } from 'react';
+import { useNotifications } from "../../context/notificationsContext.tsx";
 
 const tabs = ['TAB', 'TAB', 'TAB'];
 
 export default function NotificationsPanel() {
     const [activeTab, setActiveTab] = useState(0);
+    const { notifications } = useNotifications();
+
+    // Zobraz jen poslední dvě notifikace
+    const displayed = notifications.slice(0, 2);
 
     return (
         <div className="bg-white rounded-lg border border-gray-200 p-6 min-h-[340px]">
@@ -24,10 +29,19 @@ export default function NotificationsPanel() {
                     </button>
                 ))}
             </div>
-            <div className="flex flex-col gap-3 mt-4">
-                {/* Zde se vloží Upozornění */}
-                <div className="bg-gray-100 rounded h-10"></div>
-                <div className="bg-gray-100 rounded h-10"></div>
+            <div>
+                {displayed.length === 0 ? (
+                    <>
+                        <div className="bg-gray-100 rounded h-10"></div>
+                        <div className="bg-gray-100 rounded h-10"></div>
+                    </>
+                ) : (
+                    displayed.map(n => (
+                        <div key={n.id} className="bg-gray-100 rounded h-10 flex items-center px-4 my-3">
+                            {n.message}
+                        </div>
+                    ))
+                )}
             </div>
         </div>
     );
