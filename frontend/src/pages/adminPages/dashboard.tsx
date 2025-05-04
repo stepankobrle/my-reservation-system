@@ -1,6 +1,6 @@
 import React from "react";
-import DashboardChartsRow from "../../admin/components/dashboardChartsRow.tsx";
-import DashboardPanelsRow from '../../admin/components/dashboardPanelsRow.tsx';
+import DashboardChartsRow from "../../admin/components/dashboardChartsRow";
+import DashboardPanelsRow from '../../admin/components/dashboardPanelsRow';
 
 export default function Dashboard() {
     return (

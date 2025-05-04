@@ -1,5 +1,5 @@
-// NotificationsContext.tsx
-import React, { createContext, useContext, useState } from "react";
+ // NotificationsContext.tsx
+import  { createContext, useContext, useState } from "react";
 
 export type Notification = {
     id: string;

@@ -1,10 +1,14 @@
-import React, { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState } from "react";
 
 export type Booking = {
     id: string;
     guest: string;
     date: string;
     status: "pending" | "confirmed" | "cancelled";
+    time?: string;
+    guestCount?: number;
+    email?: string;
+    phone?: string;
 };
 
 type BookingContextType = {

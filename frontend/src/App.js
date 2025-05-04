@@ -9,6 +9,8 @@ import NotificationPage from "./pages/adminPages/notifications.tsx";
 import {NotificationsProvider} from "./context/notificationsContext.tsx";
 import {ReservationProvider} from "./context/reservationsContext.tsx";
 import ReservationPage from "./pages/adminPages/reservations.tsx";
+import TableManagment from "./pages/adminPages/tableManagment";
+import MenuManagment from "./pages/adminPages/menuManagment.tsx";
 
 
 function App() {
@@ -35,6 +37,9 @@ function App() {
                     <Route index element={<Dashboard />} />
                     <Route path="notification" element={<NotificationPage />} />
                     <Route path="reservations" element={<ReservationPage />} />
+                    <Route path="tablemanagment" element={<TableManagment/>} />
+                    <Route path="menumanagment" element={<MenuManagment/>} />
+
                     {/* další admin podstránky */}
                 </Route>
         </Routes>

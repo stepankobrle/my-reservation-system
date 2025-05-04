@@ -1,8 +1,8 @@
-import { useState } from "react";
-import NotificationList from "../../admin/components/notificationList.tsx";
-import NotificationModal from "../../admin/components/notificationModal.tsx";
-import NotificationTabs from "../../admin/components/notificationTabs.tsx";
-import { useNotifications } from "../../context/notificationsContext.tsx";
+import  { useState } from "react";
+import NotificationList from "../../admin/components/notificationList";
+import NotificationModal from "../../admin/components/notificationModal";
+import NotificationTabs from "../../admin/components/notificationTabs";
+import { useNotifications } from "../../context/notificationsContext";
 
 export type Notification = {
     id: string;

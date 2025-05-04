@@ -1,7 +1,8 @@
-import React, { useState } from "react";
-import { useBookings } from "../../context/reservationsContext.tsx";
-import EditBookingModal from "../../admin/components/editBookingModal.tsx";
-import DeleteConfirmationModal from "../../admin/components/deleteConfirmationModal.tsx";
+import  { useState } from "react";
+
+import { useBookings } from "../../context/reservationsContext";
+import EditBookingModal from "../../admin/components/editBookingModal";
+import DeleteConfirmationModal from "../../admin/components/deleteConfirmationModal";
 
 
 const generateTimeOptions = () => {
