@@ -1,34 +1,31 @@
-import React from "react";
-import Nav from "../../restaurant/components/nav.tsx";
-import Header from "../../restaurant/components/header.tsx";
-import About from "../../restaurant/components/about.tsx";
-import Contact from "../../restaurant/components/contact.tsx";
-import Newsletter from "../../restaurant/components/newsletter.tsx";
-import Footer from "../../restaurant/components/footer.tsx";
-import { contactLines } from "../../restaurant/data/contactLines.tsx";
+import * as React from "react";
+import Nav from "../../restaurant/components/nav";
+import Header from "../../restaurant/components/header";
+import About from "../../restaurant/components/about";
+import Contact from "../../restaurant/components/contact";
+import Newsletter from "../../restaurant/components/newsletter";
+import Footer from "../../restaurant/components/footer";
+import { contactLines } from "../../restaurant/data/contactLines";
+import HomeGrid from "../../restaurant/components/homeGrid";
+import InfoSection from "../../restaurant/components/infoSection";
+
 
 function homepage() {
     return (
         <>
             <Nav />
             <Header/>
+            <InfoSection/>
+            <HomeGrid/>
 
-            <About
-                title="O restauraci"
-                paragraphs={[
-                    "Naše restaurace nabízí moderní prostředí, špičkovou kuchyni a příjemnou atmosféru pro každou příležitost.",
-                    "Těšíme se na vaši návštěvu každý den od 11:00 do 23:00. Rezervace přijímáme online i telefonicky."
-                ]}
-                //imageSrc={}
-                imageAlt="Interiér restaurace"
-            />
-
+            {/* sekce s informacemi o restauraci
             <Contact
                 title="Kontakt"
                 contactLines={contactLines}
                 imageSrc="cesta_k_obrazku" // např. importovaná mapa nebo foto
                 imageAlt="Mapa nebo foto"
             />
+            */}
 
             <Newsletter/>
             <Footer/>

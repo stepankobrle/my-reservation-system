@@ -1,4 +1,5 @@
 import { useState } from "react";
+// @ts-ignore
 import Logo from "../../img/logo.png";
 import { Link } from "react-router-dom";
 export default function Nav() {
@@ -14,13 +15,13 @@ export default function Nav() {
 
                 {/* Desktop menu */}
                     <nav className=" hidden md:flex items-center space-x-8">
-                        <Link to="/" className="text-white hover:text-yellow-400 transition">Home</Link>
-                        <Link to="/o-nas" className="text-white hover:text-yellow-400 transition">O nás</Link>
-                        <Link to="/menu" className="text-white hover:text-yellow-400 transition">Menu</Link>
-                        <Link to="/kontakt" className="text-white hover:text-yellow-400 transition">Kontakt</Link>
+                        <Link to="/" className="text-white hover:text-yellow-400 transition font-medium">Home</Link>
+                        <Link to="/o-nas" className="text-white hover:text-yellow-400 transition font-medium">O nás</Link>
+                        <Link to="/menu" className="text-white hover:text-yellow-400 transition font-medium">Menu</Link>
+                        <Link to="/kontakt" className="text-white hover:text-yellow-400 transition font-medium">Kontakt</Link>
                         <Link
                             to="/rezervace"
-                            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+                            className="px-4 py-2 bg-[#1b5e4b] text-white rounded hover:bg-[#125743] transition font-bold"
                             onClick={() => setOpen(false)}
                         >
                             REZERVOVAT
@@ -48,7 +49,7 @@ export default function Nav() {
                     <Link to="/kontakt" className="text-white hover:text-yellow-400 transition">Kontakt</Link>
                     <Link
                         to="/rezervace"
-                        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+                        className="px-4 py-2 bg-[#1b5e4b] text-white rounded hover:bg-[#125743] transition"
                         onClick={() => setOpen(false)}
                     >
                         REZERVOVAT

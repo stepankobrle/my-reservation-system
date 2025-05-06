@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { FaClock, FaMapMarkerAlt, FaEnvelope } from "react-icons/fa";
 
 export default function ReservationPage() {
@@ -51,7 +51,7 @@ export default function ReservationPage() {
             case 1:
                 return (
                     <>
-                        <div className="flex flex-col md:flex-row gap-4 mb-4">
+                        <div className="flex flex-col md:flex-row gap-4 mb-4 ">
                             <div className="flex-1">
                                 <label className="block text-sm font-medium mb-1">Počet osob</label>
                                 <select
@@ -81,7 +81,7 @@ export default function ReservationPage() {
                                 {times.map((time, idx) => (
                                     <button
                                         key={idx}
-                                        className={`px-2 py-2 rounded border ${selectedTime === time ? "bg-blue-600 text-white" : "bg-white text-gray-700"} hover:bg-blue-100`}
+                                        className={`px-2 py-2 rounded border ${selectedTime === time ? "bg-[#1b5e4b] text-white" : "bg-white text-gray-700"} hover:bg-blue-100`}
                                         onClick={() => setSelectedTime(time)}
                                         type="button"
                                     >
@@ -90,9 +90,9 @@ export default function ReservationPage() {
                                 ))}
                             </div>
                         </div>
-                        <div className="flex justify-end gap-2 mt-8">
+                        <div className="flex justify-end gap-2 mt-14">
                             <button
-                                className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                                className="px-6 py-2 bg-[#1b5e4b] text-white rounded hover:bg-[#125743]"
                                 disabled={!selectedPersons || !selectedTime || !selectedDate}
                                 onClick={() => setStep(2)}
                             >
@@ -111,7 +111,7 @@ export default function ReservationPage() {
                             onChange={e => setNote(e.target.value)}
                             placeholder="Zde můžete přidat poznámku k rezervaci (např. dětská židlička, bezlepkové menu...)"
                         />
-                        <div className="flex justify-between gap-2 mt-8">
+                        <div className="flex justify-between gap-2 mt-56">
                             <button
                                 className="px-6 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400"
                                 onClick={() => setStep(1)}
@@ -119,7 +119,7 @@ export default function ReservationPage() {
                                 &larr; ZPĚT
                             </button>
                             <button
-                                className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                                className="px-6 py-2 bg-[#1b5e4b] text-white rounded hover:bg-[#125743]"
                                 onClick={() => setStep(3)}
                             >
                                 POKRAČOVAT &rarr;
@@ -160,7 +160,7 @@ export default function ReservationPage() {
                                     onChange={e => setEmail(e.target.value)}
                                     required
                                 />
-                                <div className="flex justify-between gap-2 mt-6">
+                                <div className="flex justify-between gap-2 mt-8">
                                     <button
                                         type="button"
                                         className="px-6 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400"
@@ -170,7 +170,7 @@ export default function ReservationPage() {
                                     </button>
                                     <button
                                         type="submit"
-                                        className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                                        className="px-6 py-2 bg-[#1b5e4b] text-white rounded hover:bg-[#125743]"
                                         disabled={!name || !surname || !email}
                                     >
                                         POKRAČOVAT &rarr;
@@ -188,7 +188,7 @@ export default function ReservationPage() {
                         </div>
                         <div className="flex justify-center">
                             <button
-                                className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                                className="px-6 py-2 bg-[#1b5e4b] text-white rounded hover:bg-[#125743]"
                                 onClick={handleConfirm}
                             >
                                 Zpět na začátek
@@ -209,7 +209,7 @@ export default function ReservationPage() {
                 <div className="bg-white rounded shadow-md w-full max-w-4xl flex flex-col md:flex-row overflow-hidden">
                     {/* Levý panel */}
                     <div className="md:w-1/2 w-full p-8 flex flex-col gap-6 border-b md:border-b-0 md:border-r border-gray-200">
-                        <button className="mb-6 text-sm px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 w-fit"
+                        <button className="mb-6 text-sm px-4 py-2 bg-[#1b5e4b] text-white rounded hover:bg-[#125743] w-fit"
                                 onClick={() => setStep(1)}>
                             &lt; VRÁTIT SE ZPĚT
                         </button>
@@ -236,7 +236,7 @@ export default function ReservationPage() {
                     </div>
 
                     {/* Pravý panel (dynamicky podle kroku) */}
-                    <div className="md:w-1/2 w-full p-8 bg-gray-100 flex flex-col gap-4">
+                    <div className="md:w-1/2 w-full p-8 bg-gray-100 flex flex-col gap-4 min-h-[470px]">
                         {renderStep()}
                     </div>
                 </div>
