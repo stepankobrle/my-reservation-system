@@ -14,12 +14,130 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-model Category {
-  id          Int      @id @default(autoincrement())
-  name        String   @db.VarChar(255)
-  description String
-  positionId  Int?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  companyId   Int
+model Restaurant {
+  id        String   @id @default(uuid())
+  name      String
+  email     String
+  phone     String?
+  address   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  users         User[]
+  tables        Table[]
+  menus         Menu[]
+  reservations  Reservation[]
+  notifications Notification[]
+}
+
+model User {
+  id           String     @id @default(uuid())
+  email        String     @unique
+  password     String
+  name         String
+  role         Role       @default(GUEST)
+  restaurantId String
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  Notification Notification[]
+}
+
+enum Role {
+  ADMIN
+  MANAGER
+  EMPLOYEE
+  GUEST
+}
+
+model Guest {
+  id        String @id @default(uuid())
+  firstName String
+  lastName  String
+  email     String
+  phone     String
+
+  reservations Reservation[]
+}
+
+model Reservation {
+  id              String            @id @default(uuid())
+  restaurantId    String
+  guestId         String
+  tableId         String?
+  reservationTime DateTime
+  peopleCount     Int
+  status          ReservationStatus
+  note            String?
+
+  restaurant Restaurant @relation(fields: [restaurantId], references: [id])
+  guest      Guest      @relation(fields: [guestId], references: [id])
+  table      Table?     @relation(fields: [tableId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum ReservationStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+}
+
+model Table {
+  id           String     @id @default(uuid())
+  number       Int
+  capacity     Int
+  location     String?
+  restaurantId String
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  Reservation Reservation[]
+}
+
+model Menu {
+  id            String     @id @default(uuid())
+  name          String
+  isActive      Boolean    @default(true)
+  availableFrom DateTime?
+  availableTo   DateTime?
+  restaurantId  String
+  restaurant    Restaurant @relation(fields: [restaurantId], references: [id])
+  items         MenuItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model MenuItem {
+  id          String  @id @default(uuid())
+  name        String
+  description String?
+  price       Float
+  category    String
+  allergens   Int[] // Např. [1, 3, 7] — lepek, vejce, mléko
+  menuId      String
+  menu        Menu    @relation(fields: [menuId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Notification {
+  id           String     @id @default(uuid())
+  type         String
+  message      String
+  isRead       Boolean    @default(false)
+  userId       String?
+  restaurantId String
+  user         User?      @relation(fields: [userId], references: [id])
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
