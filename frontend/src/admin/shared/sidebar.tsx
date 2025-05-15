@@ -4,6 +4,7 @@ import { GiShop } from "react-icons/gi";
 import { HiOutlineLogout } from "react-icons/hi";
 import { MdDashboard, MdFastfood, MdPeople, MdTableBar, MdMessage, MdSettings, MdPerson, MdCalendarMonth , MdFoodBank } from "react-icons/md";
 
+
 export default function Sidebar() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const { pathname } = useLocation();
@@ -11,7 +12,7 @@ export default function Sidebar() {
 
     const handleLogout = () => {
         localStorage.removeItem("token");
-        navigate("/login");
+        navigate("/");
     };
 
     // Hlavní odkazy

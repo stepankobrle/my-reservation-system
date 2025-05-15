@@ -11,6 +11,10 @@ import {ReservationProvider} from "./context/reservationsContext.tsx";
 import ReservationPage from "./pages/adminPages/reservations.tsx";
 import TableManagment from "./pages/adminPages/tableManagment";
 import MenuManagment from "./pages/adminPages/menuManagment.tsx";
+import CalendarPage from "./pages/adminPages/calendarPage";
+import {ProtectedRoute} from "./admin/components/auth/protectedRoute";
+import AdminLogin from "./pages/adminPages/login.tsx";
+import {AuthProvider} from "./admin/components/auth/authProvider";
 
 
 function App() {
@@ -25,16 +29,23 @@ function App() {
           <Route path="/rezervace" element={<Rezervace />} />
 
 
+            <Route path="/admin/login" element={<AdminLogin />} />
+
             {/* Admin routy */}
                 <Route path="/admin" element={
-                    <NotificationsProvider>
-                        <ReservationProvider>
-                             <Layout />
-                        </ReservationProvider>
-                    </NotificationsProvider>
+                    <ProtectedRoute>
+                        <AuthProvider>
+                            <NotificationsProvider>
+                                <ReservationProvider>
+                                     <Layout />
+                                </ReservationProvider>
+                            </NotificationsProvider>
+                        </AuthProvider>
+                    </ProtectedRoute>
                     }>
 
                     <Route index element={<Dashboard />} />
+                    <Route path="calendar" element={<CalendarPage />} />
                     <Route path="notification" element={<NotificationPage />} />
                     <Route path="reservations" element={<ReservationPage />} />
                     <Route path="tablemanagment" element={<TableManagment/>} />
