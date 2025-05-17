@@ -15,6 +15,7 @@ import CalendarPage from "./pages/adminPages/calendarPage";
 import {ProtectedRoute} from "./admin/components/auth/protectedRoute";
 import AdminLogin from "./pages/adminPages/login.tsx";
 import {AuthProvider} from "./admin/components/auth/authProvider";
+import ManageReservation from "./pages/Delimano/manageReservation.tsx";
 
 
 function App() {
@@ -27,6 +28,8 @@ function App() {
           {/* Add other routes here */}
           <Route path="/menu" element={<Menu />} />
           <Route path="/rezervace" element={<Rezervace />} />
+          <Route path="/reservation/manage" element={<ManageReservation />} />
+
 
 
             <Route path="/admin/login" element={<AdminLogin />} />

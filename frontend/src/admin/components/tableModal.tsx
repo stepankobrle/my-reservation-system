@@ -1,25 +1,17 @@
 import { useState } from "react";
 
 export default function TableModal({ table, onClose, onSave }) {
-    const [name, setName] = useState(table?.name || "");
-    const [seats, setSeats] = useState(table?.seats || "");
-    const [location1, setLocation1] = useState(table?.location1 || "");
-    const [location2, setLocation2] = useState(table?.location2 || "");
-    const [note, setNote] = useState(table?.note || "");
-    const [canBeCombined, setCanBeCombined] = useState(table?.canBeCombined || false);
-    const [active, setActive] = useState(table?.active ?? true);
+    const [number, setNumber] = useState(table?.number || "");
+    const [capacity, setCapacity] = useState(table?.capacity || "");
+    const [location1, setLocation1] = useState(table?.location || ""); // ✅ správně
 
     const handleSubmit = (e) => {
         e.preventDefault();
         onSave({
             id: table?.id || undefined,
-            name,
-            seats,
-            location1,
-            location2,
-            note,
-            canBeCombined,
-            active,
+            number,
+            capacity,
+            location1, // ✅ odesíláme správný název
         });
     };
 
@@ -32,15 +24,17 @@ export default function TableModal({ table, onClose, onSave }) {
                 <h2 className="text-xl font-semibold mb-6">
                     {table ? "Úprava stolu" : "Vytvoření stolu"}
                 </h2>
+
                 <div className="flex gap-4 mb-4">
                     <div className="flex-1">
-                        <label className="block text-sm mb-1">Název stolu</label>
+                        <label className="block text-sm mb-1">Číslo stolu</label>
                         <input
+                            type="number"
+                            min={1}
                             className="border w-full rounded px-3 py-2"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
+                            value={number}
+                            onChange={(e) => setNumber(e.target.value)}
                             required
-                            placeholder="povinné"
                         />
                     </div>
                     <div className="flex-1">
@@ -49,55 +43,23 @@ export default function TableModal({ table, onClose, onSave }) {
                             type="number"
                             min={1}
                             className="border w-full rounded px-3 py-2"
-                            value={seats}
-                            onChange={(e) => setSeats(e.target.value)}
+                            value={capacity}
+                            onChange={(e) => setCapacity(e.target.value)}
                             required
-                            placeholder="povinné"
                         />
                     </div>
                 </div>
+
                 <div className="mb-4">
                     <label className="block text-sm mb-1">Umístění</label>
                     <input
-                        className="border w-full rounded px-3 py-2 mb-2"
+                        className="border w-full rounded px-3 py-2"
                         value={location1}
                         onChange={(e) => setLocation1(e.target.value)}
-                        placeholder="nepovinné"
-                    />
-                    <input
-                        className="border w-full rounded px-3 py-2"
-                        value={location2}
-                        onChange={(e) => setLocation2(e.target.value)}
-                        placeholder="nepovinné"
+                        placeholder="např. terasa, salonek..."
                     />
                 </div>
-                <div className="mb-4">
-                    <label className="block text-sm mb-1">Poznámka</label>
-                    <textarea
-                        className="border w-full rounded px-3 py-2"
-                        value={note}
-                        onChange={(e) => setNote(e.target.value)}
-                        placeholder="nepovinné"
-                    />
-                </div>
-                <div className="mb-4 flex gap-8">
-                    <label className="flex items-center gap-2">
-                        <input
-                            type="checkbox"
-                            checked={canBeCombined}
-                            onChange={(e) => setCanBeCombined(e.target.checked)}
-                        />
-                        Možnost spojit s jiným stolem
-                    </label>
-                    <label className="flex items-center gap-2">
-                        <input
-                            type="checkbox"
-                            checked={active}
-                            onChange={(e) => setActive(e.target.checked)}
-                        />
-                        Aktivní
-                    </label>
-                </div>
+
                 <div className="flex justify-between mt-8">
                     <button
                         type="button"
