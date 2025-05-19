@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import MenuItemModal from "../../admin/components/menuItemsModal";
 
 export default function MenuItemsPage({ menu, onBack }) {
@@ -6,19 +6,45 @@ export default function MenuItemsPage({ menu, onBack }) {
     const [modalOpen, setModalOpen] = useState(false);
     const [editingItem, setEditingItem] = useState(null);
 
-    const handleSaveItem = (item) => {
+    useEffect(() => {
+        const loadItems = async () => {
+            const res = await fetch(`/api/admin/menu-items?menuId=${menu.id}`);
+            const data = await res.json();
+            setItems(data);
+        };
+        loadItems();
+    }, [menu.id]);
+
+    const handleSaveItem = async (item) => {
+        let savedItem;
+
         if (editingItem) {
-            setItems((prev) => prev.map((i) => (i.id === item.id ? item : i)));
+            const res = await fetch(`/api/admin/menu-items/${item.id}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(item),
+            });
+            savedItem = await res.json();
+            setItems((prev) => prev.map((i) => (i.id === savedItem.id ? savedItem : i)));
         } else {
-            setItems((prev) => [...prev, { ...item, id: Date.now().toString() }]);
+            const res = await fetch(`/api/admin/menu-items`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ ...item, menuId: menu.id }),
+            });
+            savedItem = await res.json();
+            setItems((prev) => [...prev, savedItem]);
         }
+
         setModalOpen(false);
         setEditingItem(null);
     };
 
     return (
         <div className="p-8 bg-white rounded-lg shadow-md">
-            <button onClick={onBack} className="mb-4 p-1 px-4 rounded-md text-white bg-blue-600">&larr; Zpět</button>
+            <button onClick={onBack} className="mb-4 p-1 px-4 rounded-md text-white bg-blue-600">
+                &larr; Zpět
+            </button>
 
             <div className="flex justify-between mb-4">
                 <h2 className="text-2xl font-semibold mb-6">{menu.name}</h2>
@@ -28,8 +54,11 @@ export default function MenuItemsPage({ menu, onBack }) {
                         setEditingItem(null);
                         setModalOpen(true);
                     }}
-                >+</button>
+                >
+                    +
+                </button>
             </div>
+
             <div className="bg-gray-100 rounded">
                 <div className="grid grid-cols-6 px-6 py-3 border-b font-semibold">
                     <div>Název</div>
@@ -47,16 +76,27 @@ export default function MenuItemsPage({ menu, onBack }) {
                         <div>{item.allergens?.join(", ")}</div>
                         <div>{item.price}</div>
                         <div className="flex gap-2">
-                            <button onClick={() => { setEditingItem(item); setModalOpen(true); }} className="text-gray-600 hover:text-green-700">✏️</button>
-                            {/* případně tlačítko pro mazání */}
+                            <button
+                                onClick={() => {
+                                    setEditingItem(item);
+                                    setModalOpen(true);
+                                }}
+                                className="text-gray-600 hover:text-green-700"
+                            >
+                                ✏️
+                            </button>
                         </div>
                     </div>
                 ))}
             </div>
+
             {modalOpen && (
                 <MenuItemModal
                     item={editingItem}
-                    onClose={() => { setModalOpen(false); setEditingItem(null); }}
+                    onClose={() => {
+                        setModalOpen(false);
+                        setEditingItem(null);
+                    }}
                     onSave={handleSaveItem}
                 />
             )}

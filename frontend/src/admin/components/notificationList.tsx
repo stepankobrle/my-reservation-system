@@ -1,18 +1,43 @@
-// NotificationList.tsx
-import { Notification } from "../../pages/adminPages/notifications";
-export default function NotificationList({ notifications, onEdit, onDelete }: {
-    notifications: Notification[];
-    onEdit: (n: Notification) => void;
-    onDelete: (id: string) => void;
-}) {
+import React from "react";
+
+type Notification = {
+    id: string;
+    type: string;
+    message: string;
+    isRead: boolean;
+    guestId?: string;
+    reservationTime?: string;
+    createdAt: string;
+    guest?: {
+        email: string;
+    };
+};
+
+export default function NotificationList({ notifications }: { notifications: Notification[] }) {
+    if (notifications.length === 0) {
+        return <p className="text-gray-500">Žádné notifikace.</p>;
+    }
+    console.log("NOTIFIKACE:", notifications);
+
     return (
-        <div className="flex flex-col gap-4 mt-2">
-            {notifications.map(n => (
-                <div key={n.id} className="bg-gray-100 rounded h-10 flex items-center justify-between px-4">
-                    <span>{n.message}</span>
-                    <div className="flex gap-2">
-                        <button className="text-blue-600" onClick={() => onEdit(n)}>✏️</button>
-                        <button className="text-red-600" onClick={() => onDelete(n.id)}>🗑️</button>
+        <div className="space-y-4">
+            {notifications.map((n) => (
+                <div
+                    key={n.id}
+                    className={`border rounded-lg p-4 shadow-sm ${
+                        n.isRead ? "bg-white" : "bg-blue-50"
+                    }`}
+                >
+                    <div className="text-sm font-medium text-gray-800">{n.message}</div>
+
+                    {n.guest?.email && (
+                        <div className="text-sm text-gray-600 mt-1">👤 {n.guest.email}</div>
+                    )}
+
+                    <div className="text-xs text-gray-400 mt-1">
+                        {n.reservationTime
+                            ? new Date(n.reservationTime).toLocaleString("cs-CZ")
+                            : new Date(n.createdAt).toLocaleString("cs-CZ")}
                     </div>
                 </div>
             ))}

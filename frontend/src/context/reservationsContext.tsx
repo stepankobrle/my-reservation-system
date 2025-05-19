@@ -25,10 +25,7 @@ export const useBookings = () => {
 };
 
 export const ReservationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [bookings, setBookings] = useState<Booking[]>([
-        { id: "1", guest: "Jan Novák", date: "2025-05-04", status: "confirmed" },
-        { id: "2", guest: "Petr Svoboda", date: "2025-05-05", status: "pending" },
-    ]);
+    const [bookings, setBookings] = useState<Booking[]>([]);
     return (
         <BookingContext.Provider value={{ bookings, setBookings }}>
             {children}

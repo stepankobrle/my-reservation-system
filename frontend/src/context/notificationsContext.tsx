@@ -1,10 +1,15 @@
- // NotificationsContext.tsx
+// context/NotificationsContext.tsx
 import React, { createContext, useContext, useState } from "react";
 
 export type Notification = {
     id: string;
+    type: string;
     message: string;
-    status: "unread" | "read";
+    isRead: boolean;
+    restaurantId: string;
+    userId?: string;
+    createdAt: string;
+    updatedAt: string;
 };
 
 type NotificationsContextType = {
@@ -21,10 +26,8 @@ export const useNotifications = () => {
 };
 
 export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [notifications, setNotifications] = useState<Notification[]>([
-        { id: "1", message: "Nová rezervace", status: "unread" },
-        { id: "2", message: "Platba byla potvrzena", status: "read" },
-    ]);
+    const [notifications, setNotifications] = useState<Notification[]>([]); // žádná pevná data
+
     return (
         <NotificationsContext.Provider value={{ notifications, setNotifications }}>
             {children}

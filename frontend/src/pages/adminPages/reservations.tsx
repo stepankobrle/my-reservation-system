@@ -1,79 +1,126 @@
-import  { useState } from "react";
-
+import { useState, useEffect } from "react";
+import api from "../../admin/lib/axios";
 import { useBookings } from "../../context/reservationsContext";
-import EditBookingModal from "../../admin/components/editBookingModal";
+import BookingModal from "../../admin/components/bookingModal";
 import DeleteConfirmationModal from "../../admin/components/deleteConfirmationModal";
-
+import { useAuth } from "../../admin/components/auth/authProvider";
 
 const generateTimeOptions = () => {
     const times = [];
     for (let h = 0; h < 24; h++) {
         for (let m = 0; m < 60; m += 30) {
-            const hour = h.toString().padStart(2, "0");
-            const minute = m.toString().padStart(2, "0");
-            times.push(`${hour}:${minute}`);
+            times.push(`${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}`);
         }
     }
     return times;
 };
+
 const TIME_OPTIONS = generateTimeOptions();
 
 export default function Reservations() {
     const { bookings, setBookings } = useBookings();
+    const { currentUser } = useAuth();
     const [search, setSearch] = useState("");
     const [date, setDate] = useState("");
     const [time, setTime] = useState("");
-    const [editModal, setEditModal] = useState<{ open: boolean; booking: any | null }>({ open: false, booking: null });
-    const [deleteModal, setDeleteModal] = useState<{ open: boolean; id: string }>({ open: false, id: "" });
+    const [modal, setModal] = useState({ open: false, booking: null });
+    const [deleteModal, setDeleteModal] = useState({ open: false, id: "" });
 
-    // Vyhledávání a filtrování
+    useEffect(() => {
+        const fetchBookings = async () => {
+            try {
+                const token = localStorage.getItem("access_token");
+                const res = await api.get("/api/admin/reservations", {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+
+                const normalized = res.data.map(r => ({
+                    id: r.id,
+                    date: r.reservationTime.split("T")[0],
+                    time: r.reservationTime.split("T")[1].slice(0, 5),
+                    guestCount: r.peopleCount,
+                    guest: `${r.guest.firstName} ${r.guest.lastName}`,
+                    email: r.guest.email,
+                    phone: r.guest.phone,
+                    status: r.status.toLowerCase(),
+                    tableId: r.tableId,
+                    restaurantId: r.restaurantId,
+                }));
+
+                setBookings(normalized);
+            } catch (err) {
+                console.error("Chyba při načítání rezervací", err);
+            }
+        };
+
+        fetchBookings();
+    }, []);
+
     const filteredBookings = bookings.filter(b => {
         const searchMatch =
-            b.guest.toLowerCase().includes(search.toLowerCase()) ||
-            (b.email && b.email.toLowerCase().includes(search.toLowerCase())) ||
-            (b.phone && b.phone.toLowerCase().includes(search.toLowerCase()));
+            b.guest?.toLowerCase().includes(search.toLowerCase()) ||
+            b.email?.toLowerCase().includes(search.toLowerCase()) ||
+            b.phone?.toLowerCase().includes(search.toLowerCase());
         const dateMatch = !date || b.date === date;
         const timeMatch = !time || b.time === time;
         return searchMatch && dateMatch && timeMatch;
     });
 
-    // Otevření modalu pro vytvoření nové rezervace
+    const sortedBookings = [...filteredBookings].sort((a, b) => {
+        if (a.status === b.status) {
+            return new Date(`${a.date}T${a.time}`) > new Date(`${b.date}T${b.time}`) ? 1 : -1;
+        }
+        return a.status === "pending" ? -1 : 1;
+    });
+
     const handleCreate = () => {
-        setEditModal({
+        setModal({
             open: true,
             booking: {
-                id: Math.random().toString(36).slice(2),
-                guest: "",
+                id: null,
                 date: "",
                 time: "",
                 guestCount: 1,
+                guest: "",
                 email: "",
                 phone: "",
-            }
+                status: "pending",
+                restaurantId: currentUser?.restaurantId || "",
+                tableId: null,
+            },
         });
     };
 
-    // Uložení nové nebo upravené rezervace
-    const handleSave = (booking) => {
-        setBookings(prev => {
-            const exists = prev.find(b => b.id === booking.id);
-            if (exists) {
-                return prev.map(b => b.id === booking.id ? booking : b);
-            } else {
-                return [booking, ...prev];
-            }
-        });
-        setEditModal({ open: false, booking: null });
+    const handleSave = (updated) => {
+        if (updated.id) {
+            setBookings(prev => {
+                const exists = prev.find(b => b.id === updated.id);
+                if (exists) {
+                    return prev.map(b => b.id === updated.id ? updated : b);
+                } else {
+                    return [updated, ...prev];
+                }
+            });
+        } else {
+            setBookings(prev => [updated, ...prev]);
+        }
     };
 
-    // Smazání rezervace
-    const handleDelete = (id: string) => {
-        setBookings(prev => prev.filter(b => b.id !== id));
-        setDeleteModal({ open: false, id: "" });
+    const handleDelete = async (id) => {
+        try {
+            const token = localStorage.getItem("access_token");
+            await api.delete(`/api/admin/reservations/${id}`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            setBookings(prev => prev.filter(b => b.id !== id));
+            setDeleteModal({ open: false, id: "" });
+        } catch (err) {
+            console.error("Chyba při mazání", err);
+        }
     };
 
     return (
-        <div className="p-8  min-h-screen bg-white rounded-lg shadow-md">
+        <div className="p-8 min-h-screen bg-white rounded-lg shadow-md">
             <div className="flex flex-col md:flex-row md:items-end md:justify-between mb-6 gap-4">
                 <h1 className="text-2xl font-semibold">Rezervace</h1>
                 <div className="flex flex-col md:flex-row gap-4">
@@ -89,9 +136,7 @@ export default function Reservations() {
                         className="border border-blue-400 rounded px-3 py-2 text-sm"
                         value={date}
                         onChange={e => setDate(e.target.value)}
-                        placeholder="Datum"
                     />
-                    {/* Čas jako select s možností zrušit výběr */}
                     <select
                         className="border border-blue-400 rounded px-3 py-2 text-sm"
                         value={time}
@@ -112,13 +157,13 @@ export default function Reservations() {
             </div>
 
             <div className="flex flex-col gap-4 mt-2">
-                {filteredBookings.length === 0 ? (
+                {sortedBookings.length === 0 ? (
                     <>
                         <div className="bg-gray-100 rounded h-10"></div>
                         <div className="bg-gray-100 rounded h-10"></div>
                     </>
                 ) : (
-                    filteredBookings.map(b => (
+                    sortedBookings.map(b => (
                         <div key={b.id} className="bg-white rounded-lg border border-gray-200 p-4">
                             <div className="grid grid-cols-3 gap-4 mb-2">
                                 <div>
@@ -139,10 +184,16 @@ export default function Reservations() {
                                 {b.email && <span className="block text-sm mb-1">email: {b.email}</span>}
                                 {b.phone && <span className="block text-sm">telefon: {b.phone}</span>}
                             </div>
+                            <div className="text-sm text-gray-600 mb-2">
+                                <strong>Stav:</strong>{" "}
+                                <span className={b.status === "pending" ? "text-yellow-600" : "text-green-700"}>
+                  {b.status === "pending" ? "Čekající" : "Potvrzená"}
+                </span>
+                            </div>
                             <div className="flex justify-end gap-2 mt-4">
                                 <button
                                     className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-                                    onClick={() => setEditModal({ open: true, booking: b })}
+                                    onClick={() => setModal({ open: true, booking: b })}
                                 >
                                     UPRAVIT
                                 </button>
@@ -158,16 +209,14 @@ export default function Reservations() {
                 )}
             </div>
 
-            {/* Modal pro editaci nebo vytvoření */}
-            {editModal.open && (
-                <EditBookingModal
-                    booking={editModal.booking}
-                    onClose={() => setEditModal({ open: false, booking: null })}
+            {modal.open && (
+                <BookingModal
+                    booking={modal.booking}
+                    onClose={() => setModal({ open: false, booking: null })}
                     onSave={handleSave}
                 />
             )}
 
-            {/* Modal pro potvrzení smazání */}
             {deleteModal.open && (
                 <DeleteConfirmationModal
                     onClose={() => setDeleteModal({ open: false, id: "" })}

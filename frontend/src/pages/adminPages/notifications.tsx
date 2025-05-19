@@ -1,57 +1,69 @@
-import  { useState } from "react";
+import { useState, useEffect } from "react";
 import NotificationList from "../../admin/components/notificationList";
-import NotificationModal from "../../admin/components/notificationModal";
-import NotificationTabs from "../../admin/components/notificationTabs";
 import { useNotifications } from "../../context/notificationsContext";
-
-export type Notification = {
-    id: string;
-    message: string;
-    status: "unread" | "read";
-};
+import { useAuth } from "../../admin/components/auth/authProvider";
+import api from "../../admin/lib/axios";
 
 export default function NotificationPage() {
-    // Tohle je správné: notifications a setNotifications z contextu!
+    const { currentUser } = useAuth();
+    const restaurantId = currentUser?.restaurantId;
+    const [search, setSearch] = useState("");
     const { notifications, setNotifications } = useNotifications();
-    const [activeTab, setActiveTab] = useState(0);
-    const [modal, setModal] = useState<{ open: boolean; notification?: Notification }>({ open: false });
 
-    // Mazání notifikace
-    const handleDelete = (id: string) =>
-        setNotifications(notifications.filter(n => n.id !== id));
+    const validNotifications = Array.isArray(notifications) ? notifications : [];
+    const filteredNotifications = validNotifications.filter((n) =>
+        n.message.toLowerCase().includes(search.toLowerCase())
+    );
 
-    // Úprava notifikace
-    const handleEdit = (id: string, newMessage: string) =>
-        setNotifications(notifications.map(n => n.id === id ? { ...n, message: newMessage } : n));
+    useEffect(() => {
+        if (!restaurantId) return;
+
+        const fetchNotifications = async () => {
+            try {
+                const res = await api.get("/api/admin/notifications", {
+                    params: { restaurantId },
+                });
+                setNotifications(res.data);
+            } catch (error) {
+                console.error("Chyba při načítání notifikací:", error);
+            }
+        };
+
+        fetchNotifications();
+        const interval = setInterval(fetchNotifications, 5000);
+        return () => clearInterval(interval);
+    }, [restaurantId, setNotifications]);
+
 
     return (
         <div className="p-8 bg-gray-50 min-h-screen bg-white rounded-lg shadow-md">
             <div className="flex items-center justify-between mb-6">
-                <div>
-                    <h1 className="text-2xl font-semibold mb-2">Upozornění</h1>
-                    <input className="border px-3 py-1 rounded" placeholder="Placeholder" />
+                <h1 className="text-2xl font-semibold">Upozornění</h1>
+                <div className="flex gap-2">
+                    <input
+                        type="search"
+                        placeholder="Vyhledat zprávu..."
+                        className="border border-gray-300 rounded px-3 py-2 text-sm"
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                    />
+                    <input
+                        type="date"
+                        className="border px-3 py-1 rounded"
+                    />
+                    <select className="border px-3 py-1 rounded">
+                        <option value="">Čas (libovolný)</option>
+                        <option value="newest">Nejnovější</option>
+                        <option value="oldest">Nejstarší</option>
+                    </select>
                 </div>
-                <NotificationTabs activeTab={activeTab} setActiveTab={setActiveTab} />
             </div>
+
             <NotificationList
-                notifications={notifications}
-                onEdit={notif => setModal({ open: true, notification: notif })}
-                onDelete={handleDelete}
+                notifications={validNotifications.filter(n =>
+                    n.message.toLowerCase().includes(search.toLowerCase())
+                )}
             />
-            {modal.open && modal.notification && (
-                <NotificationModal
-                    notification={modal.notification}
-                    onClose={() => setModal({ open: false })}
-                    onSave={newMessage => {
-                        handleEdit(modal.notification!.id, newMessage);
-                        setModal({ open: false });
-                    }}
-                    onDelete={() => {
-                        handleDelete(modal.notification!.id);
-                        setModal({ open: false });
-                    }}
-                />
-            )}
         </div>
     );
 }

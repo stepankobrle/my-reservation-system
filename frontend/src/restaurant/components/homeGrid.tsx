@@ -32,7 +32,7 @@ const HomeGrid = () => (
     </div>
 
 
-    <div className="grid grid-cols-1 lg:grid-cols-2 grid-rows-4 lg:grid-rows-1 min-h-[600px]">
+    <div className="grid grid-cols-1 lg:grid-cols-2 grid-rows-2 lg:grid-rows-1 min-h-[600px]">
             {/* Levý dolní blok s textem */}
                 <div className="order-2 lg:order-1 bg-[#f8e0b0] flex flex-col justify-center items-start p-6 md:p-12">
                     <p className="mb-6 text-[#1b5e4b]">

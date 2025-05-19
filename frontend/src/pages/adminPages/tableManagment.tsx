@@ -77,6 +77,8 @@ export default function TableManagement() {
     useEffect(() => {
         const token = localStorage.getItem('token');
         const restaurantId = currentUser?.restaurantId;
+        console.log('token v localStorage:', localStorage.getItem("token"));
+        console.log('access_token v localStorage:', localStorage.getItem("access_token"));
 
         if (!token || !restaurantId) return;
 
@@ -115,6 +117,7 @@ export default function TableManagement() {
             location: formData.location1 || '',
             restaurantId,
         };
+        console.log("📤 Data k uložení:", body);
 
         try {
             const res = await fetch(url, {

@@ -16,12 +16,16 @@ import {ProtectedRoute} from "./admin/components/auth/protectedRoute";
 import AdminLogin from "./pages/adminPages/login.tsx";
 import {AuthProvider} from "./admin/components/auth/authProvider";
 import ManageReservation from "./pages/Delimano/manageReservation.tsx";
+import { Toaster } from 'react-hot-toast';
 
 
 function App() {
   const [count, setCount] = useState(0)
 
   return (
+      <>
+      <Toaster position="top-right" reverseOrder={false} />
+
       <Router>
         <Routes>
           <Route path="/" element={<Homepage />} />
@@ -59,6 +63,7 @@ function App() {
         </Routes>
 
       </Router>
+      </>
   )
 }
 export default App
