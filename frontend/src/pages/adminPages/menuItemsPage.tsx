@@ -1,43 +1,59 @@
 import { useEffect, useState } from "react";
 import MenuItemModal from "../../admin/components/menuItemsModal";
+import api from "../../admin/lib/axios";
+import DeleteConfirmationModal from "../../admin/components/deleteConfirmationModal";
 
 export default function MenuItemsPage({ menu, onBack }) {
     const [items, setItems] = useState([]);
     const [modalOpen, setModalOpen] = useState(false);
     const [editingItem, setEditingItem] = useState(null);
+    const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+    const [itemToDelete, setItemToDelete] = useState(null);
 
     useEffect(() => {
         const loadItems = async () => {
-            const res = await fetch(`/api/admin/menu-items?menuId=${menu.id}`);
-            const data = await res.json();
-            setItems(data);
+            const res = await api.get(`/api/admin/menu-items`, {
+                params: { menuId: menu.id },
+            });
+            const sorted = res.data.sort((a, b) => a.order - b.order);
+            setItems(sorted);
         };
         loadItems();
     }, [menu.id]);
 
     const handleSaveItem = async (item) => {
         let savedItem;
-
         if (editingItem) {
-            const res = await fetch(`/api/admin/menu-items/${item.id}`, {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(item),
-            });
-            savedItem = await res.json();
-            setItems((prev) => prev.map((i) => (i.id === savedItem.id ? savedItem : i)));
+            const res = await api.patch(`/api/admin/menu-items/${item.id}`, item);
+            savedItem = res.data;
+            setItems((prev) =>
+                prev.map((i) => (i.id === savedItem.id ? savedItem : i))
+            );
         } else {
-            const res = await fetch(`/api/admin/menu-items`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ ...item, menuId: menu.id }),
+            const res = await api.post(`/api/admin/menu-items`, {
+                ...item,
+                menuId: menu.id,
             });
-            savedItem = await res.json();
+            savedItem = res.data;
             setItems((prev) => [...prev, savedItem]);
         }
-
         setModalOpen(false);
         setEditingItem(null);
+    };
+
+    const handleDrag = (fromIdx, toIdx) => {
+        const updated = [...items];
+        const [moved] = updated.splice(fromIdx, 1);
+        updated.splice(toIdx, 0, moved);
+
+        setItems(updated);
+
+        // Zaktualizuj pořadí na backendu
+        updated.forEach(async (item, index) => {
+            if (item.order !== index + 1) {
+                await api.patch(`/api/admin/menu-items/${item.id}`, { order: index + 1 });
+            }
+        });
     };
 
     return (
@@ -60,22 +76,31 @@ export default function MenuItemsPage({ menu, onBack }) {
             </div>
 
             <div className="bg-gray-100 rounded">
-                <div className="grid grid-cols-6 px-6 py-3 border-b font-semibold">
+                <div className="grid grid-cols-3 lg:grid-cols-5 px-6 py-3 border-b font-semibold">
                     <div>Název</div>
-                    <div>Gramy</div>
-                    <div>Popisek</div>
-                    <div>Alergeny</div>
+                    <div className="hidden md:block">Popisek</div>
+                    <div className="hidden md:block">Alergeny</div>
                     <div>Cena</div>
                     <div></div>
                 </div>
-                {items.map((item) => (
-                    <div key={item.id} className="grid grid-cols-6 px-6 py-3 border-b last:border-b-0 bg-white">
+
+                {items.map((item, idx) => (
+                    <div
+                        key={item.id}
+                        className="grid grid-cols-3 lg:grid-cols-5 px-6 py-3 border-b last:border-b-0 bg-white cursor-move"
+                        draggable
+                        onDragStart={(e) => e.dataTransfer.setData("idx", idx.toString())}
+                        onDragOver={(e) => e.preventDefault()}
+                        onDrop={(e) => {
+                            const from = +e.dataTransfer.getData("idx");
+                            handleDrag(from, idx);
+                        }}
+                    >
                         <div>{item.name}</div>
-                        <div>{item.grams}</div>
-                        <div>{item.note}</div>
-                        <div>{item.allergens?.join(", ")}</div>
+                        <div className="hidden md:block">{item.description}</div>
+                        <div className="hidden md:block">{item.allergens?.join(", ")}</div>
                         <div>{item.price}</div>
-                        <div className="flex gap-2">
+                        <div className="flex gap-10">
                             <button
                                 onClick={() => {
                                     setEditingItem(item);
@@ -84,6 +109,15 @@ export default function MenuItemsPage({ menu, onBack }) {
                                 className="text-gray-600 hover:text-green-700"
                             >
                                 ✏️
+                            </button>
+                            <button
+                                onClick={() => {
+                                    setItemToDelete(item);
+                                    setDeleteModalOpen(true);
+                                }}
+                                className="text-gray-600 hover:text-red-700"
+                            >
+                                🗑️
                             </button>
                         </div>
                     </div>
@@ -99,6 +133,19 @@ export default function MenuItemsPage({ menu, onBack }) {
                     }}
                     onSave={handleSaveItem}
                 />
+            )}
+
+            {deleteModalOpen && (
+                <DeleteConfirmationModal
+                    onClose={() => setDeleteModalOpen(false)}
+                    onConfirm={async () => {
+                        await api.delete(`/api/admin/menu-items/${itemToDelete.id}`);
+                        setItems((prev) => prev.filter((i) => i.id !== itemToDelete.id));
+                        setDeleteModalOpen(false);
+                    }}
+                >
+                    {itemToDelete?.name}
+                </DeleteConfirmationModal>
             )}
         </div>
     );

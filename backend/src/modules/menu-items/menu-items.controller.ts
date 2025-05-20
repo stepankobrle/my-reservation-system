@@ -1,34 +1,36 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller, Get, Post, Patch, Delete, Param, Body, Query, UseGuards,
+} from '@nestjs/common';
 import { MenuItemsService } from './menu-items.service';
 import { CreateMenuItemDto } from './dto/create-menu-item.dto';
 import { UpdateMenuItemDto } from './dto/update-menu-item.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../../common/decorators/roles.decorator';
 
-@Controller('menu-items')
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles('MANAGER', 'ADMIN')
+@Controller('api/admin/menu-items')
 export class MenuItemsController {
-  constructor(private readonly menuItemsService: MenuItemsService) {}
-
-  @Post()
-  create(@Body() createMenuItemDto: CreateMenuItemDto) {
-    return this.menuItemsService.create(createMenuItemDto);
-  }
+  constructor(private readonly service: MenuItemsService) {}
 
   @Get()
-  findAll() {
-    return this.menuItemsService.findAll();
+  findAll(@Query('menuId') menuId: string) {
+    return this.service.findAll(menuId);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.menuItemsService.findOne(+id);
+  @Post()
+  create(@Body() dto: CreateMenuItemDto) {
+    return this.service.create(dto);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateMenuItemDto: UpdateMenuItemDto) {
-    return this.menuItemsService.update(+id, updateMenuItemDto);
+  update(@Param('id') id: string, @Body() dto: UpdateMenuItemDto) {
+    return this.service.update(id, dto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.menuItemsService.remove(+id);
+    return this.service.remove(id);
   }
 }

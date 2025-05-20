@@ -1,9 +1,17 @@
 import { Module } from '@nestjs/common';
-import { ReservationsService } from './reservations.service';
-import { ReservationsController } from './reservations.controller';
+import { ReservationService } from './reservations.service';
+import { AdminReservationController, PublicReservationController } from './reservations.controller'; // přidáno
+import { AuthModule } from '../auth/auth.module';
+import { EmailService } from '../../utils/email.service';
+import { PrismaModule } from '../../../prisma/prisma.module';
+import { NotificationsModule } from '../notifications/notifications.module';
 
 @Module({
-  controllers: [ReservationsController],
-  providers: [ReservationsService],
+  imports: [AuthModule, PrismaModule, NotificationsModule],
+  controllers: [
+    AdminReservationController,
+    PublicReservationController, // ⬅️ přidáno!
+  ],
+  providers: [ReservationService, EmailService],
 })
 export class ReservationsModule {}

@@ -28,6 +28,7 @@ model Restaurant {
   menus         Menu[]
   reservations  Reservation[]
   notifications Notification[]
+  MenuTab       MenuTab[]
 }
 
 model User {
@@ -35,7 +36,7 @@ model User {
   email        String     @unique
   password     String
   name         String
-  role         Role       @default(GUEST)
+  role         Role       @default(EMPLOYEE)
   restaurantId String
   restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
 
@@ -49,17 +50,17 @@ enum Role {
   ADMIN
   MANAGER
   EMPLOYEE
-  GUEST
 }
 
 model Guest {
   id        String @id @default(uuid())
   firstName String
   lastName  String
-  email     String
+  email     String @unique
   phone     String
 
-  reservations Reservation[]
+  reservations  Reservation[]
+  notifications Notification[] // zpětný vztah
 }
 
 model Reservation {
@@ -98,6 +99,17 @@ model Table {
   updatedAt DateTime @updatedAt
 
   Reservation Reservation[]
+
+  @@unique([restaurantId, number])
+}
+
+model MenuTab {
+  id           String     @id @default(uuid())
+  name         String
+  restaurantId String
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+  menus        Menu[]
+  order        Int        @default(0)
 }
 
 model Menu {
@@ -109,9 +121,12 @@ model Menu {
   restaurantId  String
   restaurant    Restaurant @relation(fields: [restaurantId], references: [id])
   items         MenuItem[]
+  order         Int        @default(0)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  MenuTab   MenuTab? @relation(fields: [menuTabId], references: [id], onDelete: Cascade)
+  menuTabId String
 }
 
 model MenuItem {
@@ -119,24 +134,31 @@ model MenuItem {
   name        String
   description String?
   price       Float
-  category    String
+  category    String?
   allergens   Int[] // Např. [1, 3, 7] — lepek, vejce, mléko
   menuId      String
-  menu        Menu    @relation(fields: [menuId], references: [id])
+  order       Int     @default(0)
+  menu        Menu    @relation(fields: [menuId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Notification {
-  id           String     @id @default(uuid())
-  type         String
-  message      String
-  isRead       Boolean    @default(false)
-  userId       String?
-  restaurantId String
-  user         User?      @relation(fields: [userId], references: [id])
-  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+  id      String  @id @default(uuid())
+  type    String
+  message String
+  isRead  Boolean @default(false)
+
+  guestId String? // FK na Guest
+  guest   Guest?  @relation(fields: [guestId], references: [id]) // vztah
+
+  reservationTime DateTime?
+  restaurantId    String
+  restaurant      Restaurant @relation(fields: [restaurantId], references: [id])
+
+  userId String?
+  User   User?   @relation(fields: [userId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
