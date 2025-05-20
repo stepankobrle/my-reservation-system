@@ -41,7 +41,7 @@ export class AuthService {
             throw new UnauthorizedException('Invalid credentials');
         }
 
-        const payload = { sub: user.id, role: user.role };
+        const payload = { sub: user.id, role: user.role, restaurantId: user.restaurantId, };
         return {
             access_token: this.jwtService.sign(payload),
         };
