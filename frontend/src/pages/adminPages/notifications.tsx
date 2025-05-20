@@ -36,16 +36,16 @@ export default function NotificationPage() {
 
 
     return (
-        <div className="p-8 bg-gray-50 min-h-screen bg-white rounded-lg shadow-md">
-            <div className="flex items-center justify-between mb-6">
+        <div className="p-8 min-h-screen bg-white rounded-lg shadow-md">
+            <div className="flex flex-col md:flex-row md:items-end md:justify-between mb-6 gap-4">
                 <h1 className="text-2xl font-semibold">Upozornění</h1>
-                <div className="flex gap-2">
+                <div className="flex flex-col md:flex-row gap-4">
                     <input
                         type="search"
-                        placeholder="Vyhledat zprávu..."
+                        placeholder="Vyhledat jméno, e-mail, telefon..."
                         className="border border-gray-300 rounded px-3 py-2 text-sm"
                         value={search}
-                        onChange={(e) => setSearch(e.target.value)}
+                        onChange={e => setSearch(e.target.value)}
                     />
                     <input
                         type="date"
@@ -56,6 +56,7 @@ export default function NotificationPage() {
                         <option value="newest">Nejnovější</option>
                         <option value="oldest">Nejstarší</option>
                     </select>
+
                 </div>
             </div>
 
