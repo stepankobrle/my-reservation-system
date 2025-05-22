@@ -1,3 +1,4 @@
+import React from "react";
 import { useState } from "react";
 // @ts-ignore
 import Logo from "../../img/logo.png";

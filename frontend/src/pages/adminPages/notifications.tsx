@@ -1,3 +1,4 @@
+import React from "react";
 import { useState, useEffect } from "react";
 import NotificationList from "../../admin/components/notificationList";
 import { useNotifications } from "../../context/notificationsContext";

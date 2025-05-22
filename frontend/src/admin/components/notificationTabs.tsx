@@ -1,3 +1,4 @@
+import React from "react";
 // NotificationTabs.tsx
 export default function NotificationTabs({ activeTab, setActiveTab }: { activeTab: number; setActiveTab: (i: number) => void }) {
     return (

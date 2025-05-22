@@ -1,3 +1,4 @@
+import React from "react";
 import { useBookings } from "../../context/reservationsContext";
 
 export default function ReservationsPanel() {

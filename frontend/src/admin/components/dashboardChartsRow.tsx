@@ -1,3 +1,4 @@
+import React from "react";
 import DashboardChart from './dashboardCharts';
 
 export default function DashboardChartsRow() {

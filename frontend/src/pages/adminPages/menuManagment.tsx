@@ -1,8 +1,10 @@
+import React from "react";
 import { useEffect, useState } from "react";
 import MenuModal from "../../admin/components/menuModal";
 import DeleteConfirmationModal from "../../admin/components/deleteConfirmationModal";
 import MenuItemsPage from "./menuItemsPage";
 import api from "../../admin/lib/axios";
+
 
 export default function MenuManagement() {
     const [tabs, setTabs] = useState([]);
@@ -303,8 +305,8 @@ export default function MenuManagement() {
                         setDeleteTabModalOpen(false);
                         setTabToDelete(null);
                     }}
-                    onConfirm={() => {
-                        handleDeleteTab(tabToDelete);
+                    onConfirm={async () => {
+                        await handleDeleteTab(tabToDelete); // <- důležité
                         setDeleteTabModalOpen(false);
                     }}
                 />

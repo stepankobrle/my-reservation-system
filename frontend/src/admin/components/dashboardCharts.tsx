@@ -1,29 +1,35 @@
 import ReactApexChart from "react-apexcharts";
+import React from "react";
 
-export default function DashboardChart({ title }) {
-    // Příklad dat a konfigurace, uprav podle potřeby
-    const options = {
+export default function DashboardChart({ title }: { title: string }) {
+    const options: ApexCharts.ApexOptions = {
         chart: {
-            type: 'line',
+            type: "line",
             toolbar: { show: false },
-            background: 'transparent',
-            fontFamily: 'Inter, sans-serif',
+            background: "transparent",
+            fontFamily: "Inter, sans-serif",
         },
         grid: { show: false },
         stroke: { width: 3 },
         xaxis: {
-            categories: ['Page A', 'Page B', 'Page C', 'Page D', 'Page E', 'Page F', 'Page G'],
+            categories: ["Page A", "Page B", "Page C", "Page D", "Page E", "Page F", "Page G"],
             labels: { style: { colors: "#fff" } }
         },
-        yaxis: { labels: { style: { colors: "#fff" } } },
-        legend: { labels: { colors: "#fff" } },
+        yaxis: {
+            labels: { style: { colors: "#fff" } }
+        },
+        legend: {
+            labels: { colors: "#fff" }
+        },
         colors: ["#2563eb", "#facc15"],
-        theme: { mode: "dark" }
+        theme: {
+            mode: "dark" as "dark" // 💡 tady je důležitý fix
+        }
     };
 
     const series = [
         { name: "pv", data: [2400, 1398, 9800, 3908, 4800, 3800, 4300] },
-        { name: "uv", data: [4000, 3000, 2000, 2780, 1890, 2390, 3490] }
+        { name: "uv", data: [4000, 3000, 2000, 2780, 1890, 2390, 3490] },
     ];
 
     return (
@@ -33,7 +39,7 @@ export default function DashboardChart({ title }) {
                 <ReactApexChart
                     options={options}
                     series={series}
-                    type="line"
+                    type="line" // NE `as const` tady!
                     height={160}
                 />
             </div>

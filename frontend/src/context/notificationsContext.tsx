@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useState } from "react";
 
 export type Notification = {
+    guest: any;
     id: string;
     type: string;
     message: string;

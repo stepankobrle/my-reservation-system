@@ -1,3 +1,4 @@
+import React from "react";
 import { useNotifications } from "../../context/notificationsContext";
 
 export default function NotificationsPanel() {
