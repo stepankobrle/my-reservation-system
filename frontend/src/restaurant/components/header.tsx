@@ -18,7 +18,7 @@ export default function header() {
             <div className="relative z-10 flex flex-col items-center">
                 <div className=" rounded p-8 mb-8">
                     <h1 className="text-white text-6xl md:text-9xl font-extrabold text-center mb-8">
-                        Nazev<br />restaurace
+                        Pečená<br />Husa
                     </h1>
                 </div>
                 <div className="flex gap-8">
