@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { GiShop } from "react-icons/gi";
 import { HiOutlineLogout } from "react-icons/hi";
-import { MdDashboard, MdFastfood, MdPeople, MdTableBar, MdMessage, MdSettings, MdPerson, MdCalendarMonth , MdFoodBank } from "react-icons/md";
+import { MdDashboard, MdFastfood, MdPeople, MdTableBar, MdMessage, MdSettings, MdPerson, MdCalendarMonth , MdFoodBank, MdOutlineRestaurantMenu } from "react-icons/md";
 
 
 export default function Sidebar() {
@@ -37,8 +37,8 @@ export default function Sidebar() {
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
                 {/* Logo a název */}
                 <div className="flex items-center gap-2 px-1 py-3">
-                    <GiShop className="text-green-500" fontSize={24} />
-                    <span className="text-neutral-200 text-lg">StyleSphere</span>
+                    <MdOutlineRestaurantMenu className="text-green-500" fontSize={28} />
+                    <span className="text-neutral-200 text-2xl">ReserveIt</span>
                 </div>
 
                 {/* Hlavní odkazy */}
