@@ -1,9 +1,16 @@
+import React from "react";
 import toast from "react-hot-toast";
 
-export default function DeleteConfirmationModal({ onClose, onConfirm }) {
+type Props = {
+    onClose: () => void;
+    onConfirm: () => Promise<void>;
+    children?: React.ReactNode;
+};
+
+export default function DeleteConfirmationModal({ onClose, onConfirm, children }: Props) {
     const handleDelete = async () => {
         try {
-            await onConfirm(); // Funkce, která provede DELETE
+            await onConfirm();
             toast.success("Rezervace byla smazána");
             onClose();
         } catch (err) {
@@ -16,7 +23,9 @@ export default function DeleteConfirmationModal({ onClose, onConfirm }) {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white rounded-lg p-6 max-w-md w-full">
                 <h2 className="text-xl font-semibold mb-4">Potvrdit smazání</h2>
-                <p className="text-gray-600 mb-6">Opravdu chcete smazat tuto rezervaci?</p>
+                <p className="text-gray-600 mb-6">
+                    Opravdu chcete smazat: <strong>{children}</strong>?
+                </p>
                 <div className="flex justify-center gap-4">
                     <button
                         onClick={onClose}

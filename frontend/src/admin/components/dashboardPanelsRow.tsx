@@ -1,3 +1,4 @@
+import React from "react";
 import NotificationsPanel from './notificationsPanel';
 import ReservationsPanel from './reservationsPanel';
 

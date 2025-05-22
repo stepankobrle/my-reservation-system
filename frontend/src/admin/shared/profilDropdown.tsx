@@ -1,7 +1,7 @@
 import React, {Fragment} from 'react';
 import {Popover, Transition} from "@headlessui/react";
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import LogoutButton from "../auth/LogoutButton";
+//import LogoutButton from "../auth/LogoutButton";
 
 export default function ProfileDropdown(props) {
     const navigate = useNavigate();
@@ -41,7 +41,7 @@ export default function ProfileDropdown(props) {
                     </div>
                     <div
                         className="rounded-sm px-4 py-2 text-gray-700 cursor-pointer hover:bg-gray-100 active:bg-gray-200 focus:bg-gray-200">
-                        <LogoutButton/>
+
                     </div>
                 </Popover.Panel>
             </Transition>

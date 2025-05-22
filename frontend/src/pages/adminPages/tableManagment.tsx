@@ -1,4 +1,5 @@
 // TableManagement.tsx
+import React from "react";
 import { useEffect, useState } from 'react';
 import {
     DndContext,
@@ -6,7 +7,7 @@ import {
     KeyboardSensor,
     PointerSensor,
     useSensor,
-    useSensors,
+    useSensors
 } from '@dnd-kit/core';
 import {
     arrayMove,
@@ -19,6 +20,7 @@ import { CSS } from '@dnd-kit/utilities';
 import TableModal from '../../admin/components/tableModal';
 import DeleteConfirmationModal from '../../admin/components/deleteConfirmationModal';
 import { useAuth } from '../../admin/components/auth/authProvider';
+
 
 function SortableTableItem({ table, onEdit, onDelete }: any) {
     const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: table.id });
@@ -189,24 +191,7 @@ export default function TableManagement() {
             </div>
 
             <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={() => {}}>
-                <SortableContext items={tables.map((t) => t.id)} strategy={rectSortingStrategy} children={
-                    <div className="grid lg:grid-cols-5 md:grid-cols-2 gap-4">
-                        {tables.map((table) => (
-                            <SortableTableItem
-                                key={table.id}
-                                table={table}
-                                onEdit={(t: any) => {
-                                    setEditingTable(t);
-                                    setModalOpen(true);
-                                }}
-                                onDelete={(t: any) => {
-                                    setDeleteModalOpen(true);
-                                    setTableToDelete(t);
-                                }}
-                            />
-                        ))}
-                    </div>
-                }>
+                <SortableContext items={tables.map((t) => t.id)} strategy={rectSortingStrategy}>
                     <div className="grid lg:grid-cols-5 md:grid-cols-2 gap-4">
                         {tables.map((table) => (
                             <SortableTableItem
